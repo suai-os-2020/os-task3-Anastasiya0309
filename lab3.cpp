@@ -24,6 +24,7 @@ semaphore_d,
 semaphore_e,
 semaphore_f,
 semaphore_h,
+semaphore_g,
 semaphore_i,
 semaphore_k,
 semaphore_m,
@@ -147,6 +148,8 @@ DWORD WINAPI thread_g(LPVOID lpParam) {
 		computation();
 		ReleaseSemaphore(semaphore_g1, 1, NULL);
 	}
+
+	ReleaseSemaphore(semaphore_g, 2, NULL);
 	WaitForSingleObject(semaphore_n1, INFINITE);
 	for (int i = 0; i < 3; i++) {
 		WaitForSingleObject(lock, INFINITE);
@@ -246,9 +249,9 @@ DWORD WINAPI thread_n(LPVOID lpParam) {
 		std::cout << 'n' << std::flush;
 		ReleaseMutex(lock);
 		computation();
-
 		ReleaseSemaphore(semaphore_n1, 1, NULL);
 	}
+	WaitForSingleObject(semaphore_g, INFINITE);
 	for (int i = 0; i < 3; i++) {
 		WaitForSingleObject(lock, INFINITE);
 		std::cout << 'n' << std::flush;
@@ -259,8 +262,9 @@ DWORD WINAPI thread_n(LPVOID lpParam) {
 }
 DWORD WINAPI thread_p(LPVOID lpParam) {
 	UNREFERENCED_PARAMETER(lpParam);
-	HANDLE semaphores[2] = {
+	HANDLE semaphores[] = {
 		semaphore_k,
+		semaphore_g,
 		semaphore_m
 	};
 	WaitForMultipleObjects(2, semaphores, TRUE, INFINITE);
@@ -334,6 +338,10 @@ int lab3_init() {
 	if (semaphore_h == NULL) {
 		std::cerr << "CreateSemaphore error: " << GetLastError() << '\n'; return 1;
 	}
+	semaphore_g = CreateSemaphore(NULL, 0, 5, NULL);          // unnamed semaphore
+	if (semaphore_g == NULL) {
+		std::cerr << "CreateSemaphore error: " << GetLastError() << '\n'; return 1;
+	}
 
 	semaphore_i = CreateSemaphore(NULL, 0, 2, NULL);          // unnamed semaphore
 	if (semaphore_i == NULL) {
@@ -356,28 +364,18 @@ int lab3_init() {
 	}
 
 	semaphore_sync = CreateSemaphore(NULL, 0, 2, NULL);          // unnamed semaphore
-	if (semaphore_r == NULL) {
-		std::cerr << "CreateSemaphore error: " << GetLastError() << '\n'; return 1;
-	}
+	
 
 	semaphore_g1 = CreateSemaphore(NULL, 0, 2, NULL);          // unnamed semaphore
-	if (semaphore_r == NULL) {
-		std::cerr << "CreateSemaphore error: " << GetLastError() << '\n'; return 1;
-	}
+	
 
 	semaphore_k1 = CreateSemaphore(NULL, 0, 2, NULL);          // unnamed semaphore
-	if (semaphore_r == NULL) {
-		std::cerr << "CreateSemaphore error: " << GetLastError() << '\n'; return 1;
-	}
+	
 	semaphore_m1 = CreateSemaphore(NULL, 0, 2, NULL);          // unnamed semaphore
-	if (semaphore_r == NULL) {
-		std::cerr << "CreateSemaphore error: " << GetLastError() << '\n'; return 1;
-	}
+	
 
 	semaphore_n1 = CreateSemaphore(NULL, 0, 2, NULL);          // unnamed semaphore
-	if (semaphore_n1 == NULL) {
-		std::cerr << "CreateSemaphore error: " << GetLastError() << '\n'; return 1;
-	}
+	
 	aThread[0] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)thread_a, NULL, 0, &ThreadID);
 	if (aThread[0] == NULL) {
 		std::cerr << "CreateThread error: " << GetLastError() << '\n'; return 1;
