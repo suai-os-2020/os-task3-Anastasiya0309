@@ -267,7 +267,7 @@ DWORD WINAPI thread_p(LPVOID lpParam) {
 		semaphore_g,
 		semaphore_m
 	};
-	WaitForMultipleObjects(2, semaphores, TRUE, INFINITE);
+	WaitForMultipleObjects(3, semaphores, TRUE, INFINITE);
 	for (int i = 0; i < 3; i++) {
 		WaitForSingleObject(lock, INFINITE);
 		std::cout << 'p' << std::flush;
