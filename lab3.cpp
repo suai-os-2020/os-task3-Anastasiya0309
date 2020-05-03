@@ -412,13 +412,14 @@ DWORD WINAPI thread_n(LPVOID lpParam) {
 		computation();
 		ReleaseSemaphore(semaphore_n1, 1, NULL);
 	}
-	//ReleaseSemaphore(semaphore_n1, 2, NULL);
+	ReleaseSemaphore(semaphore_n1, 2, NULL);
 
 	ReleaseSemaphore(semaphore_n, 2, NULL);
 
 	WaitForSingleObject(semaphore_m, INFINITE);
 	WaitForSingleObject(semaphore_k, INFINITE);
 	WaitForSingleObject(semaphore_g, INFINITE);
+	WaitForSingleObject(semaphore_n1, INFINITE);
 	for (int i = 0; i < 3; i++) {
 		WaitForSingleObject(lock, INFINITE);
 		std::cout << 'n' << std::flush;
@@ -435,6 +436,7 @@ DWORD WINAPI thread_p(LPVOID lpParam) {
 	WaitForSingleObject(semaphore_m, INFINITE);
 	WaitForSingleObject(semaphore_n, INFINITE);
 	WaitForSingleObject(semaphore_g, INFINITE);
+	WaitForSingleObject(semaphore_n1, INFINITE);
 	for (int i = 0; i < 3; i++) {
 		WaitForSingleObject(lock, INFINITE);
 		std::cout << 'p' << std::flush;
@@ -597,6 +599,10 @@ int lab3_init() {
 	CloseHandle(semaphore_k);
 	CloseHandle(semaphore_m);
 	CloseHandle(semaphore_n);
+	CloseHandle(semaphore_k1);
+	CloseHandle(semaphore_m1);
+	CloseHandle(semaphore_n1);
+	CloseHandle(semaphore_g1);
 	CloseHandle(semaphore_p);
 	return 0;
 }
